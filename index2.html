@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase authentication login</title>
+</head>
+
+<body>
+    <form id="loginform">
+        <input type="email" placeholder="Email"  id="loginEmail" required>
+        <br>
+        <input type="password" placeholder="input your password" id="loginPass" required>
+        <br>
+        <button type="submit" id="login"><a href="index2.html"></a> log in</button>
+    </form>
+
+
+
+
+    <script type="module">
+            // Import the functions you need from the SDKs you need
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+            import { getDatabase, set, ref, update } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+            import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+
+            // TODO: Add SDKs for Firebase products that you want to use
+            // https://firebase.google.com/docs/web/setup#available-libraries
+
+                    // Your web app's Firebase configuration
+                    const firebaseConfig = {
+                        apiKey: "AIzaSyDtaGYwhjN1wBtJmGYAojLrY3iSaZ7L3d4",
+                        authDomain: "fir-auth-e132a.firebaseapp.com",
+                        projectId: "fir-auth-e132a",
+                        storageBucket: "fir-auth-e132a.appspot.com",
+                        messagingSenderId: "824546496148",
+                        appId: "1:824546496148:web:df4401c079c88053766e81"
+                    };
+
+            // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
+            const database = getDatabase(app);
+            const auth = getAuth();
+            const loginForm = document.querySelector('#loginform');
+            const user = auth.currentUser;
+
+
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const email = document.getElementById('loginEmail').value
+                const password = document.getElementById('loginPass').value
+
+
+                signInWithEmailAndPassword(auth, email, password)
+                    .then((userCredential) => {
+                        // Signed in 
+                        const user = userCredential.user;
+                        // ...
+
+                        const dt = new Date();
+                        update(ref(database, 'user/' + user.uid), {
+                            last_login: dt,
+                        })
+
+                        alert('user loged in');
+
+                    })
+                    .catch((error) => {
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+
+
+                        alert('Error loging in');
+                    });
+
+            });
+    </script>
+
+</body>
+
+</html>
